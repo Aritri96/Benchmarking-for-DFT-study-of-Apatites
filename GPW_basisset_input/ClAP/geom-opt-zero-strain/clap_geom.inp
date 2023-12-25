@@ -1,0 +1,170 @@
+&GLOBAL
+  PROJECT bulk-cell_opt
+  RUN_TYPE GEO_OPT
+  PRINT_LEVEL LOW
+&END GLOBAL
+
+&FORCE_EVAL
+  METHOD QS
+  STRESS_TENSOR ANALYTICAL  
+  &DFT
+   LSD
+    BASIS_SET_FILE_NAME BASIS_SET
+    POTENTIAL_FILE_NAME GTH_POTENTIALS
+ &QS
+         EPS_DEFAULT 1e-12
+         EXTRAPOLATION USE_PREV_P
+      &END QS
+      &POISSON
+         PERIODIC XYZ
+         POISSON_SOLVER PERIODIC
+      &END POISSON
+
+      # cutoff and rel_cutoff should be taken from 02_basis_set_conv
+      &MGRID
+         CUTOFF 1500
+         NGRIDS 4
+         REL_CUTOFF 80
+      &END MGRID
+
+      # The number of k-points should be taken from 03_kpoint_conv
+      &KPOINTS
+         SCHEME MONKHORST-PACK 4 4 6
+      &END KPOINTS
+
+      &SCF
+         EPS_SCF 1e-06
+         MAX_SCF 200
+         &MIXING
+            ALPHA 0.2
+            METHOD BROYDEN_MIXING
+            NBUFFER 15
+         &END MIXING
+         SCF_GUESS ATOMIC
+      &END SCF
+
+      &XC
+         &XC_FUNCTIONAL PBE
+         &END XC_FUNCTIONAL
+      &END XC
+#FOR PBEsol
+#      &XC
+#         &XC_FUNCTIONAL 
+#           &PBE
+#            PARAMETRIZATION PBESOL
+#           &END PBE
+#         &END XC_FUNCTIONAL
+#      &END XC
+#FOR R2SCAN
+#      &XC
+#         &XC_FUNCTIONAL 
+#           &MGGA_X_R2SCAN
+#           &END MGGA_X_R2SCAN
+#           &MGGA_C_R2SCAN
+#           &END MGGA_C_R2SCAN
+#         &END XC_FUNCTIONAL
+#      &END XC
+    
+   &END DFT
+  &SUBSYS
+
+
+     &CELL
+      A  9.666523   0.000000   0.000000
+      B -4.833     8.371     0.000
+      C 0.000000   0.000000   6.728595
+    &END CELL
+
+    &COORD
+ Ca         4.8332643524        2.7904772791        0.0225015246
+ Ca        -0.0000026544        5.5809776716        3.3867991848
+ Ca        -0.0000026182        5.5809776265        6.7060937479
+ Ca         4.8332642124        2.7904772996        3.3417960525
+ Ca        -1.1518136212        2.1726893621        1.6821487810
+ Ca         3.5275651851        6.2876069770        1.6821488518
+ Ca        -2.3757613743        8.2826000650        1.6821487798
+ Ca         5.9850754152        6.1987655738        5.0464464145
+ Ca         1.3056964852        2.0838481025        5.0464464719
+ Ca         7.2090229488        0.0888548173        5.0464464385
+  P         1.6601314577        3.4334552814        1.6821488275
+  P         1.0297385171        8.0924487735        1.6821488192
+  P        -2.6898686473        5.2170040706        1.6821488453
+  P         3.1731302679        4.9379996829        5.0464464642
+  P         3.8035231267        0.2790061636        5.0464464644
+  P         7.5231303683        3.1544508066        5.0464464642
+  O         3.1001422627        2.8987620255        1.6821487868
+  O         5.6060703529        1.2354305313        1.6821488875
+  O         5.7935840691        4.2372752325        1.6821488646
+  O         1.7331194448        5.4726928969        5.0464464809
+  O        -0.7728086540        7.1360244123        5.0464465505
+  O        -0.9603223445        4.1341796611        5.0464465118
+  O         1.6304393144        4.9886665938        1.6821488252
+  O        -0.3022694388        7.2891283241        1.6821487317
+  O        -1.3281678978        4.4651148299        1.6821488709
+  O         3.2028224072        3.3827883650        5.0464464865
+  O         5.1355311064        1.0823266020        5.0464463435
+  O         6.1614296265        3.9063400909        5.0464463806
+  O         0.8609941533        2.9762252958        0.4411803010
+  O         1.8252801125        7.6289859649        0.4411830475
+  O        -2.6862769249        6.1376988307        0.4411856846
+  O         3.9722674839        5.3952296459        3.8054778750
+  O         3.0079815803        0.7424689254        3.8054806608
+  O         7.5195387709        2.2337560071        3.8054833555
+  O         3.9722675456        5.3952297260        6.2874150023
+  O         3.0079817181        0.7424692098        6.2874122585
+  O         7.5195384253        2.2337560123        6.2874096179
+  O         0.8609942425        2.9762252490        2.9231173809
+  O         1.8252799759        7.6289857675        2.9231146037
+  O        -2.6862767585        6.1376989647        2.9231119442
+ Cl        -0.0000000232        0.0000000165       -0.0000000444
+ Cl         0.0000000070        0.0000000100        3.3642976629
+  	&END COORD
+  	
+  	&KIND Ca
+ BASIS_SET ORB TZVP-MOLOPT-PBE-GTH-q10
+ POTENTIAL GTH-PBE-q10
+&END KIND
+&KIND P
+  BASIS_SET ORB TZVP-MOLOPT-PBE-GTH-q5
+  POTENTIAL GTH-PBE-q5
+&END KIND
+&KIND O
+  BASIS_SET ORB TZVP-MOLOPT-PBE-GTH-q6
+  POTENTIAL GTH-PBE-q6
+&END KIND
+&KIND Cl
+  BASIS_SET ORB TZVP-MOLOPT-PBE-GTH-q7
+  POTENTIAL GTH-PBE-q7
+&END KIND  
+  	
+&END SUBSYS
+  &PRINT
+        &STRESS_TENSOR
+        	ADD_LAST NUMERIC
+        	COMPONENTS T
+        	FILENAME new_stress_tensor.DAT
+        &END STRESS_TENSOR
+  &END PRINT
+
+&END FORCE_EVAL
+
+&MOTION
+  &GEO_OPT
+    TYPE MINIMIZATION
+    MAX_DR    1.0E-04
+    MAX_FORCE 1.0E-04
+    RMS_DR    1.0E-04
+    RMS_FORCE 1.0E-04
+    MAX_ITER 200
+    OPTIMIZER BFGS
+    &BFGS
+     TRUST_RADIUS 0.01
+    &END BFGS
+  &END GEO_OPT
+  &PRINT
+	&STRESS
+		ADD_LAST NUMERIC
+		FILENAME cell_opt
+	&END STRESS
+  &END PRINT
+&END MOTION
