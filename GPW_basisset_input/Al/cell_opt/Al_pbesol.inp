@@ -1,0 +1,117 @@
+&GLOBAL
+  PROJECT bulk-cell_opt
+  RUN_TYPE CELL_OPT
+  PRINT_LEVEL LOW
+&END GLOBAL
+
+&FORCE_EVAL
+  METHOD QS
+  STRESS_TENSOR ANALYTICAL  
+  &DFT
+   LSD
+    BASIS_SET_FILE_NAME BASIS_SET
+    POTENTIAL_FILE_NAME GTH_POTENTIALS
+ &QS
+         EPS_DEFAULT 1e-12
+         EXTRAPOLATION USE_PREV_P
+      &END QS
+      &POISSON
+         PERIODIC XYZ
+         POISSON_SOLVER PERIODIC
+      &END POISSON
+
+      # cutoff and rel_cutoff should be taken from 02_basis_set_conv
+      &MGRID
+         CUTOFF 1500
+         NGRIDS 4
+         REL_CUTOFF 100
+      &END MGRID
+
+      # The number of k-points should be taken from 03_kpoint_conv
+      &KPOINTS
+         SCHEME MONKHORST-PACK 8 8 8
+      &END KPOINTS
+
+      &SCF
+         EPS_SCF 1e-06
+         MAX_SCF 200
+         &MIXING
+            ALPHA 0.05
+            METHOD BROYDEN_MIXING
+            NBUFFER 15
+         &END MIXING
+         SCF_GUESS ATOMIC
+              ADDED_MOS  150  
+       &DIAGONALIZATION  T
+       &END DIAGONALIZATION
+       &SMEAR  T
+         METHOD  FERMI_DIRAC
+       &END SMEAR
+       
+      &END SCF
+
+
+      &XC
+         &XC_FUNCTIONAL 
+           &PBE
+            PARAMETRIZATION PBESOL
+           &END PBE
+         &END XC_FUNCTIONAL
+      &END XC
+
+   &END DFT
+  &SUBSYS
+
+
+     &CELL
+      A 4.0389296900       0.0000000000       0.0000000000
+      B 0.0000000000       4.0389296900       0.0000000000
+      C 0.0000000000       0.0000000000       4.0389296900
+      SYMMETRY CUBIC
+    &END CELL
+
+    &COORD
+    SCALED
+Al           0.0000000000       0.0000000000       0.0000000000
+Al           0.5000000000       0.5000000000       0.0000000000
+Al           0.5000000000       0.0000000000       0.5000000000
+Al           0.0000000000       0.5000000000       0.5000000000
+  	&END COORD
+  	
+&KIND Al
+  BASIS_SET ORB TZVP-MOLOPT-PBE-GTH-q3
+  POTENTIAL GTH-PBE-q3
+&END KIND 
+  	
+&END SUBSYS
+  &PRINT
+        &STRESS_TENSOR
+        	ADD_LAST NUMERIC
+        	COMPONENTS T
+        	FILENAME new_stress_tensor.DAT
+        &END STRESS_TENSOR
+  &END PRINT
+
+&END FORCE_EVAL
+&MOTION
+  &CELL_OPT
+    OPTIMIZER BFGS
+    &BFGS
+     USE_MODEL_HESSIAN TRUE
+     USE_RAT_FUN_OPT TRUE
+    &END BFGS
+    MAX_DR    1.0E-04
+    MAX_FORCE 1.0E-04
+    RMS_DR    1.0E-04
+    RMS_FORCE 1.0E-04
+
+    TYPE DIRECT_CELL_OPT
+    KEEP_SYMMETRY TRUE
+    &PRINT
+      &CELL ON
+      &END CELL
+    &END PRINT
+   KEEP_ANGLES TRUE
+  &END
+&END
+
