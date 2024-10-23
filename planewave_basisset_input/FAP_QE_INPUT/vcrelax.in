@@ -11,7 +11,7 @@
 /
 &SYSTEM
   degauss =   7.3498618000d-03
-  ecutrho =   10.000000000d+02
+  ecutrho =   9.000000000d+02
   ecutwfc =   9.00000000000d+01
   ibrav = 0
   nat = 42
